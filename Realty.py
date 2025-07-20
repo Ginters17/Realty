@@ -1,94 +1,29 @@
-import requests
-from bs4 import BeautifulSoup
-import re
 from TelegramNotificationService import sendTelegramMessage
-from ScraperService import getApartmentLinks
-from config import UNWANTED_DISTRICTS, LISTING_MIN_PRICE, LISTING_MAX_PRICE
+from ScraperService import getApartmentListings
+from ConfigReader import UNWANTED_DISTRICTS, LISTING_MIN_PRICE, LISTING_MAX_PRICE
 
-def extractPrice(soup):
-    price_text = soup.select_one(".ads_price").text.strip().replace('\xa0', ' ')
-    match = re.search(r"(\d+)", price_text)
-    if match:
-        return int(match.group(1))
-    return None
+# TODO - Move this to SmartFileService
+def filterListings(listings):
+    filteredListings = []
 
-def extractRooms(soup):
-    rooms_cell = soup.select_one("#tdo_1")
-    if rooms_cell:
-        rooms_text = rooms_cell.text.strip()
-        try:
-            return int(rooms_text)
-        except ValueError:
-            return None
-    return None
-
-def extractSize(soup):
-    area_cell = soup.select_one("#tdo_3")
-    if area_cell:
-        area_text = area_cell.text.strip()
-        match = re.search(r"(\d+)", area_text)
-        if match:
-            return int(match.group(1))
-    return None
-
-def extractDistrict(soup):
-    rajons_cell = soup.select_one("#tdo_856")
-    if rajons_cell:
-        return rajons_cell.text.strip()
-    return None
-
-def extractImageUrl(listing_url):
-    response = requests.get(listing_url)
-    response.encoding = 'utf-8'
-    soup = BeautifulSoup(response.text, "html.parser")
-    
-    img_tag = soup.select_one("img.pic_thumbnail.isfoto")
-    if img_tag and img_tag.get("src"):
-        img_url = img_tag["src"]
-        if img_url.startswith("/"):
-            img_url = "https://www.ss.com" + img_url
-        return img_url
-    return None
-
-def filterLinks(links):
-    filteredLinks = []
-
-    for link in links:
-        # Area filter
-        skip = False
-        for unwantedDistrict in UNWANTED_DISTRICTS:
-            if unwantedDistrict in link:
-                skip = True
-                break
-        if skip:
+    for listing in listings:
+        # Area filter - must not be in unwated district
+        if any(unwanted in listing['link'] for unwanted in UNWANTED_DISTRICTS):
             continue
 
-        # Price filter
-        response = requests.get(link)
-        response.encoding = 'utf-8'
-        soup = BeautifulSoup(response.text, "html.parser")
-        price = extractPrice(soup)
-        rooms = extractRooms(soup)
-        size = extractSize(soup)
-        district = extractDistrict(soup)
-        imageUrl = extractImageUrl(link)
+        # Price filter - must not be outside price boundaries
+        if not (LISTING_MIN_PRICE <= listing['price'] <= LISTING_MAX_PRICE):
+            continue
 
-        if LISTING_MIN_PRICE <= price <= LISTING_MAX_PRICE:
-            filteredLinks.append({
-                "link": link,
-                "price": price,
-                "rooms": rooms,
-                "size": size,
-                "district": district,
-                "imageUrl": imageUrl
-            })
+        # Passed all filters
+        filteredListings.append(listing)
 
-    return filteredLinks
+    return filteredListings
 
 def main():
     print("🔍 Scraping listings...")
-    links = getApartmentLinks()
-    filteredApartments = filterLinks(links)
+    listings = getApartmentListings()
+    filteredApartments = filterListings(listings)
     print(f"Found {len(filteredApartments)} new listings with matching criteria.")
     
     for apt in filteredApartments:

@@ -1,7 +1,8 @@
 import os
 import requests
+import re
 from bs4 import BeautifulSoup
-from config import SS_BASE_URL, SS_LISTINGS_URL
+from ConfigReader import SS_BASE_URL, SS_LISTINGS_URL
 
 SCRAPED_LINKS_FILE = "scraped_links.txt"
 
@@ -16,7 +17,7 @@ def saveLinks(links, mode="w"):
         for link in links:
             f.write(link + "\n")
 
-def getApartmentLinks():
+def getApartmentListings():
     page_num = 1
     end_reached = False
     all_new_links = set()
@@ -57,7 +58,8 @@ def getApartmentLinks():
         saveLinks(list(all_new_links), mode="w")
 
     print(f"Scraped {len(all_new_links)} new listings.")
-    return list(all_new_links)
+    enrichedListings = [enrichLink(link) for link in all_new_links]
+    return list(enrichedListings)
 
 def getPageUrl(page_num):
     if page_num == 1:
@@ -65,3 +67,64 @@ def getPageUrl(page_num):
     else:
         base_url = SS_LISTINGS_URL.rsplit('/', 1)[0]
         return f"{base_url}/page{page_num}.html"
+
+def enrichLink(link):
+    response = requests.get(link)
+    response.encoding = 'utf-8'
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    price = extractPrice(soup)
+    rooms = extractRooms(soup)
+    size = extractSize(soup)
+    district = extractDistrict(soup)
+    image_url = extractImageUrl(soup)
+
+    return {
+        "link": link,
+        "price": price,
+        "rooms": rooms,
+        "size": size,
+        "district": district,
+        "imageUrl": image_url
+    }
+
+def extractPrice(soup):
+    price_text = soup.select_one(".ads_price").text.strip().replace('\xa0', ' ')
+    match = re.search(r"(\d+)", price_text)
+    if match:
+        return int(match.group(1))
+    return None
+
+def extractRooms(soup):
+    rooms_cell = soup.select_one("#tdo_1")
+    if rooms_cell:
+        rooms_text = rooms_cell.text.strip()
+        try:
+            return int(rooms_text)
+        except ValueError:
+            return None
+    return None
+
+def extractSize(soup):
+    area_cell = soup.select_one("#tdo_3")
+    if area_cell:
+        area_text = area_cell.text.strip()
+        match = re.search(r"(\d+)", area_text)
+        if match:
+            return int(match.group(1))
+    return None
+
+def extractDistrict(soup):
+    rajons_cell = soup.select_one("#tdo_856")
+    if rajons_cell:
+        return rajons_cell.text.strip()
+    return None
+
+def extractImageUrl(soup):    
+    img_tag = soup.select_one("img.pic_thumbnail.isfoto")
+    if img_tag and img_tag.get("src"):
+        img_url = img_tag["src"]
+        if img_url.startswith("/"):
+            img_url = "https://www.ss.com" + img_url
+        return img_url
+    return None
