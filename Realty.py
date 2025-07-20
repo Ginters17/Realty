@@ -70,13 +70,11 @@ def filterLinks(links):
 
     return filteredLinks
 
-
-
 def main():
     print("🔍 Scraping listings...")
     links = getApartmentLinks()
     filteredApartments = filterLinks(links)
-    print(f"Found {len(filteredApartments)} listings with matching criteria.")
+    print(f"Found {len(filteredApartments)} new listings with matching criteria.")
     
     for apt in filteredApartments:
         sendTelegramMessage(apt)
