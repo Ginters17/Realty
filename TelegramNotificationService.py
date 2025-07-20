@@ -10,18 +10,19 @@ def sendTelegramMessage(apt):
         f"Size: *{apt['size']} m²*\n"
         f"🔗 [View Listing]({apt['link']})"
     )
-            
-    if(TELEGRAM_SERVICE == "real"):
-        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    
+    if TELEGRAM_SERVICE == "real":
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendPhoto"
         data = {
             "chat_id": TELEGRAM_CHAT_ID,
-            "text": message,
+            "photo": apt['imageUrl'],
+            "caption": message,
             "parse_mode": "Markdown"
         }
         response = requests.post(url, data=data)
-        if(response.status_code == 200):
-            print("Succesfully sent telegram notification with listing")
+        if response.status_code == 200:
+            print("Successfully sent telegram photo notification with listing")
         else:
-            print("Failed to send notification. Error code {response.status_code}, {response.text}")
+            print(f"Failed to send photo notification. Error code {response.status_code}, {response.text}")
     else:
         print("Mock telegram service used")

@@ -37,6 +37,19 @@ def extractDistrict(soup):
         return rajons_cell.text.strip()
     return None
 
+def extractImageUrl(listing_url):
+    response = requests.get(listing_url)
+    response.encoding = 'utf-8'
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    img_tag = soup.select_one("img.pic_thumbnail.isfoto")
+    if img_tag and img_tag.get("src"):
+        img_url = img_tag["src"]
+        if img_url.startswith("/"):
+            img_url = "https://www.ss.com" + img_url
+        return img_url
+    return None
+
 def filterLinks(links):
     filteredLinks = []
 
@@ -58,6 +71,7 @@ def filterLinks(links):
         rooms = extractRooms(soup)
         size = extractSize(soup)
         district = extractDistrict(soup)
+        imageUrl = extractImageUrl(link)
 
         if LISTING_MIN_PRICE <= price <= LISTING_MAX_PRICE:
             filteredLinks.append({
@@ -65,7 +79,8 @@ def filterLinks(links):
                 "price": price,
                 "rooms": rooms,
                 "size": size,
-                "district": district
+                "district": district,
+                "imageUrl": imageUrl
             })
 
     return filteredLinks
