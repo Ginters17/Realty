@@ -1,5 +1,5 @@
 import requests
-from config.config_reader import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_SERVICE
+from config.config_reader import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_SERVICE_IMPL
 
 def sendTelegramMessage(apt):
     message = (
@@ -11,7 +11,7 @@ def sendTelegramMessage(apt):
         f"🔗 [View Listing]({apt['link']})"
     )
     
-    if TELEGRAM_SERVICE == "real":
+    if TELEGRAM_SERVICE_IMPL == "real":
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendPhoto"
         data = {
             "chat_id": TELEGRAM_CHAT_ID,

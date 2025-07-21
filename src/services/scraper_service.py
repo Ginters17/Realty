@@ -3,21 +3,10 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from config.config_reader import SS_BASE_URL, SS_LISTINGS_URL
+from services.scraper_storage_service import load_viewed_listings, save_viewed_listings
 
-SCRAPED_LINKS_FILE = "data/scraped_links.txt"
-
-def loadScrapedLinks():
-    if not os.path.exists(SCRAPED_LINKS_FILE):
-        return set()
-    with open(SCRAPED_LINKS_FILE, "r", encoding="utf-8") as f:
-        return set(line.strip() for line in f if line.strip())  # ignore empty lines
-
-def saveLinks(links, mode="w"):
-    os.makedirs(os.path.dirname(SCRAPED_LINKS_FILE), exist_ok=True)  # ensure folder exists
-    with open(SCRAPED_LINKS_FILE, mode, encoding="utf-8") as f:
-        for link in links:
-            f.write(link + "\n")
-
+BUCKET_NAME = "realty-scraper"
+SCRAPED_LINKS_FILE = "scraped_links.txt"
 
 def getApartmentListings():
     page_num = 1
@@ -31,7 +20,7 @@ def getApartmentListings():
         response.encoding = 'utf-8'
         soup = BeautifulSoup(response.text, "html.parser")
 
-        scraped_links = loadScrapedLinks()
+        scraped_links = load_viewed_listings(BUCKET_NAME, SCRAPED_LINKS_FILE)
         new_links = []
 
         for row in soup.select("tr[id^=tr_]"):
@@ -55,9 +44,9 @@ def getApartmentListings():
     # When only few links found append to already scraped links, otherwise overwrite all scraped links.
     # Because if overwrite with e.g. 1 link and it gets removed then will incorrectly scrape all pages.
     if len(all_new_links) < 3:
-        saveLinks(list(all_new_links), mode="a")
+        save_viewed_listings(all_new_links, BUCKET_NAME, SCRAPED_LINKS_FILE, "a")
     else:
-        saveLinks(list(all_new_links), mode="w")
+        save_viewed_listings(all_new_links, BUCKET_NAME, SCRAPED_LINKS_FILE, "w")
 
     enrichedListings = [enrichLink(link) for link in all_new_links]
     return list(enrichedListings)
