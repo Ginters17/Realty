@@ -25,6 +25,7 @@ jobs:
         with:
           name: scraped-links
           path: ./data/
+        continue-on-error: true
 
       - name: Ensure scraped links file exists
         run: |
