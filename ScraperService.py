@@ -57,7 +57,6 @@ def getApartmentListings():
     else:
         saveLinks(list(all_new_links), mode="w")
 
-    print(f"Scraped {len(all_new_links)} new listings.")
     enrichedListings = [enrichLink(link) for link in all_new_links]
     return list(enrichedListings)
 

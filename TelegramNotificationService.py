@@ -21,8 +21,8 @@ def sendTelegramMessage(apt):
         }
         response = requests.post(url, data=data)
         if response.status_code == 200:
-            print("Successfully sent telegram photo notification with listing")
+            print("Successfully sent telegram notification with listing")
         else:
-            print(f"Failed to send photo notification. Error code {response.status_code}, {response.text}")
+            print(f"Failed to send telegram notification. Error code {response.status_code}, {response.text}")
     else:
         print("Mock telegram service used")
