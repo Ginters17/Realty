@@ -2,7 +2,7 @@ import os
 import requests
 import re
 from bs4 import BeautifulSoup
-from config.ConfigReader import SS_BASE_URL, SS_LISTINGS_URL
+from config.config_reader import SS_BASE_URL, SS_LISTINGS_URL
 
 SCRAPED_LINKS_FILE = "data/scraped_links.txt"
 

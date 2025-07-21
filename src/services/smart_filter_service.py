@@ -1,4 +1,4 @@
-from config.ConfigReader import UNWANTED_DISTRICTS, LISTING_MIN_PRICE, LISTING_MAX_PRICE
+from config.config_reader import UNWANTED_DISTRICTS, LISTING_MIN_PRICE, LISTING_MAX_PRICE
 
 # TODO - Add AI, add room filter
 def filterListings(listings):
