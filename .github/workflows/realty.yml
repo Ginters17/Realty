@@ -17,6 +17,10 @@ jobs:
       UNWANTED_DISTRICTS: ${{ vars.UNWANTED_DISTRICTS }}
       LISTING_MIN_PRICE: ${{ vars.LISTING_MIN_PRICE }}
       LISTING_MAX_PRICE: ${{ vars.LISTING_MAX_PRICE }}
+      LISTING_MIN_SIZE: ${{ vars.LISTING_MIN_SIZE }}
+      LISTING_MAX_SIZE: ${{ vars.LISTING_MAX_SIZE }}
+      LISTING_MIN_ROOMS: ${{ vars.LISTING_MIN_ROOMS }}
+      LISTING_MAX_ROOMS: ${{ vars.LISTING_MAX_ROOMS }}
     steps:
       - uses: actions/checkout@v3
 
