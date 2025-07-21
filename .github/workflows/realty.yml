@@ -11,12 +11,12 @@ jobs:
     env:
       TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-      TELEGRAM_SERVICE: ${{ secrets.TELEGRAM_SERVICE }}
-      SS_BASE_URL: ${{ secrets.SS_BASE_URL }}
-      SS_LISTINGS_URL: ${{ secrets.SS_LISTINGS_URL }}
-      UNWANTED_DISTRICTS: ${{ secrets.UNWANTED_DISTRICTS }}
-      LISTING_MIN_PRICE: ${{ secrets.LISTING_MIN_PRICE }}
-      LISTING_MAX_PRICE: ${{ secrets.LISTING_MAX_PRICE }}
+      TELEGRAM_SERVICE: ${{ vars.TELEGRAM_SERVICE }}
+      SS_BASE_URL: ${{ vars.SS_BASE_URL }}
+      SS_LISTINGS_URL: ${{ vars.SS_LISTINGS_URL }}
+      UNWANTED_DISTRICTS: ${{ vars.UNWANTED_DISTRICTS }}
+      LISTING_MIN_PRICE: ${{ vars.LISTING_MIN_PRICE }}
+      LISTING_MAX_PRICE: ${{ vars.LISTING_MAX_PRICE }}
     steps:
       - uses: actions/checkout@v3
 
