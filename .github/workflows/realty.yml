@@ -34,7 +34,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run scraper
-        run: python Realty.py
+        run: python src/Realty.py
 
       - name: Commit scraped links if changed
         run: |

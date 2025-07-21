@@ -1,5 +1,5 @@
 import requests
-from ConfigReader import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_SERVICE
+from config.ConfigReader import TELEGRAM_TOKEN, TELEGRAM_CHAT_ID, TELEGRAM_SERVICE
 
 def sendTelegramMessage(apt):
     message = (

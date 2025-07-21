@@ -1,6 +1,6 @@
-from TelegramNotificationService import sendTelegramMessage
-from ScraperService import getApartmentListings
-from SmartFilterService import filterListings
+from services.TelegramNotificationService import sendTelegramMessage
+from services.ScraperService import getApartmentListings
+from services.SmartFilterService import filterListings
 
 def main():
     print("🔍 Scraping listings...")
