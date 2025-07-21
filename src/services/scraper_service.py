@@ -68,6 +68,11 @@ def enrichLink(link):
     size = extractSize(soup)
     district = extractDistrict(soup)
     image_url = extractImageUrl(soup)
+    floor = extractFloor(soup)
+    hasDishWasher = extractHasDishWasher(soup)
+    hasRepair = extractHasRepair(soup)
+    hasFurniture = extractHasFurniture(soup)
+    hasStudioLayout = extractHasStudioLayout(soup)
 
     return {
         "link": link,
@@ -75,7 +80,12 @@ def enrichLink(link):
         "rooms": rooms,
         "size": size,
         "district": district,
-        "imageUrl": image_url
+        "imageUrl": image_url,
+        "floor": floor,
+        "hasDishWasher": hasDishWasher,
+        "hasRepair": hasRepair,
+        "hasFurniture": hasFurniture,
+        "hasStudioLayout": hasStudioLayout
     }
 
 def extractPrice(soup):
@@ -110,6 +120,12 @@ def extractDistrict(soup):
         return rajons_cell.text.strip()
     return None
 
+def extractFloor(soup):
+    floor_cell = soup.select_one("#tdo_4")
+    if floor_cell:
+        return floor_cell.text.strip()
+    return None
+
 def extractImageUrl(soup):    
     img_tag = soup.select_one("img.pic_thumbnail.isfoto")
     if img_tag and img_tag.get("src"):
@@ -118,3 +134,44 @@ def extractImageUrl(soup):
             img_url = "https://www.ss.com" + img_url
         return img_url
     return None
+
+def extractHasDishWasher(soup):
+    div = soup.find("div", id="msg_div_msg")
+    text = div.get_text().lower()
+    keywords = ["velas masina", "veļas mašīna", "veļasmašīna", "velasmasina"]
+
+    if any(keyword in text for keyword in keywords):
+        return True
+    else:
+        return False
+    
+def extractHasRepair(soup):
+    div = soup.find("div", id="msg_div_msg")
+    text = div.get_text().lower()
+    keywords = ["remont", "renov"]
+
+    if any(keyword in text for keyword in keywords):
+        return True
+    else:
+        return False
+
+def extractHasFurniture(soup):
+    div = soup.find("div", id="msg_div_msg")
+    text = div.get_text().lower()
+    keywords = ["mēbelēt", "mebelet"]
+
+    if any(keyword in text for keyword in keywords):
+        return True
+    else:
+        return False
+    
+
+def extractHasStudioLayout(soup):
+    div = soup.find("div", id="msg_div_msg")
+    text = div.get_text().lower()
+    keywords = ["studio", "studij"]
+
+    if any(keyword in text for keyword in keywords):
+        return True
+    else:
+        return False
