@@ -4,18 +4,20 @@ import re
 from bs4 import BeautifulSoup
 from ConfigReader import SS_BASE_URL, SS_LISTINGS_URL
 
-SCRAPED_LINKS_FILE = "scraped_links.txt"
+SCRAPED_LINKS_FILE = "data/scraped_links.txt"
 
 def loadScrapedLinks():
     if not os.path.exists(SCRAPED_LINKS_FILE):
         return set()
     with open(SCRAPED_LINKS_FILE, "r", encoding="utf-8") as f:
-        return set(line.strip() for line in f)
+        return set(line.strip() for line in f if line.strip())  # ignore empty lines
 
 def saveLinks(links, mode="w"):
+    os.makedirs(os.path.dirname(SCRAPED_LINKS_FILE), exist_ok=True)  # ensure folder exists
     with open(SCRAPED_LINKS_FILE, mode, encoding="utf-8") as f:
         for link in links:
             f.write(link + "\n")
+
 
 def getApartmentListings():
     page_num = 1
