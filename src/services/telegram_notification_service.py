@@ -26,7 +26,7 @@ def sendTelegramMessage(apt):
         }
         response = requests.post(url, data=data)
         if response.status_code == 200:
-            print("Successfully sent telegram notification with listing")
+            print(f"Successfully sent telegram notification with listing to {'chat (local testing)' if int(TELEGRAM_CHAT_ID) > 0 else 'channel (prod)'}")
         else:
             print(f"Failed to send telegram notification. Error code {response.status_code}, {response.text}")
     else:
