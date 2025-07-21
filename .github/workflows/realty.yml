@@ -2,25 +2,28 @@ name: Realty Scraper
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs every hour (UTC)
-  workflow_dispatch:  # Allows manual run
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:
 
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_SERVICE: ${{ secrets.TELEGRAM_SERVICE }}
+      SS_BASE_URL: ${{ secrets.SS_BASE_URL }}
+      SS_LISTINGS_URL: ${{ secrets.SS_LISTINGS_URL }}
+      UNWANTED_DISTRICTS: ${{ secrets.UNWANTED_DISTRICTS }}
+      LISTING_MIN_PRICE: ${{ secrets.LISTING_MIN_PRICE }}
+      LISTING_MAX_PRICE: ${{ secrets.LISTING_MAX_PRICE }}
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-
       - name: Install dependencies
         run: pip install -r requirements.txt
-
       - name: Run scraper
         run: python Realty.py
-        env:
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
