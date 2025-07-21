@@ -1,6 +1,4 @@
 This application (glorified script) is used to scrape ss.com and retrieve apartment listing matching some filters. Matching listings are then sent to user via telegram bot.
 
-Required pip packages:
-    pip install requests 
-    pip install beautifulsoup4
-    pip install python-dotenv
+Required:
+    pip install -r requirements.txt
